@@ -1,0 +1,17 @@
+{
+  "last_sync": "2025-08-28T09:49:59.500884",
+  "project": "logreducer",
+  "source_path": "/projects/logreducer",
+  "synced_files": [
+    "CLAUDE.md",
+    ".claude/",
+    "scripts/claude-sync",
+    "scripts/README.md",
+    ".vscode/settings.json",
+    "docs/DEVELOPER_ANTIPATTERNS.md",
+    "docs/DEVELOPER_CHANGES.md",
+    "docs/SCRIPT_ARCHITECTURE.md",
+    "docs/CLAUDE_SYNC_WORKFLOW.md"
+  ],
+  "sync_tool_version": "2.0.0"
+}

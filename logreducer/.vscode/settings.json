@@ -1,0 +1,100 @@
+{
+    // Claude Code Settings
+    "claude.alwaysAllowReadOnly": true,
+    "claude.alwaysAllowEdits": true,
+    "claude.confirmBeforeEdit": false,
+    "claude.confirmBeforeRead": false,
+    
+    // Python Environment
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.terminal.activateEnvironment": false, // Disabled to prevent double activation with Claude
+    
+    // Python Testing - Using built-in test support only
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests",
+        "-v",
+        "--tb=short"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    
+    // Formatting Configuration - Proper order: isort first, then black
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            // Step 1: Organize imports with isort
+            "source.organizeImports": "explicit",
+            // Step 2: Format with black
+            "source.formatDocument": "never"  // We'll use formatOnSave instead
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    
+    // Black formatter settings
+    "black-formatter.args": [
+        "--line-length=88"
+    ],
+    
+    // isort settings - configured to be compatible with Black
+    "isort.args": [
+        "--profile=black",
+        "--line-length=88"
+    ],
+    
+    // Type Checking with mypy
+    "mypy-type-checker.args": [
+        "--ignore-missing-imports",
+        "--follow-imports=silent",
+        "--show-column-numbers"
+    ],
+    
+    // Editor settings
+    "editor.formatOnSave": true,
+    "editor.rulers": [88, 120],
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/.coverage": true,
+        "**/htmlcov": true,
+        "**/*.pyc": true,
+        "**/.tmp": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.tox": true,
+        "**/.venv": true,
+        "**/node_modules": true
+    },
+    "files.watcherExclude": {
+        "**/.venv/**": true,
+        "**/node_modules/**": true,
+        "**/.tmp/**": true,
+        "**/build/**": true,
+        "**/dist/**": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/.venv": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.tmp": true
+    },
+    "autoDocstring.docstringFormat": "google",
+    "autoDocstring.startOnNewLine": false,
+    "restructuredtext.preview.sphinx.buildPath": "docs/_build/html",
+    "restructuredtext.confPath": "docs",
+    "esbonio.sphinx.confDir": "docs",
+    "esbonio.sphinx.srcDir": "docs",
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    }
+}
