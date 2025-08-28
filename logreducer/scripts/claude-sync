@@ -52,9 +52,9 @@ def load_env_config() -> Dict[str, str]:
     
     # Default configuration
     config = {
-        'repo_url': 'https://github.com/hsderek/claude-state',
+        'repo_url': 'https://github.com/hsderek/claude-sync',
         'subdir': project_dir,
-        'local_path': str(Path.home() / 'claude-state')
+        'local_path': str(Path.home() / 'claude-sync')
     }
     
     # Try to read .env file if it exists

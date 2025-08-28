@@ -644,10 +644,13 @@ The `scripts/claude-sync` script is a **COMPLETELY STANDALONE UTILITY** that mus
 
 ### How Claude Sync Works
 
-The script syncs Claude-specific files to a central repository (`https://github.com/hsderek/claude-state`) with subdirectories for each project:
+The script syncs Claude-specific files to a central repository (`https://github.com/hsderek/claude-sync`) with subdirectories for each project:
 
 ```
-claude-state/
+claude-sync/
+├── scripts/             # Standalone scripts
+│   ├── claude-sync      # The sync script
+│   └── README.md        # Script documentation
 ├── logreducer/          # This project
 │   ├── CLAUDE.md
 │   ├── .claude/
@@ -681,7 +684,7 @@ chmod +x scripts/claude-sync
 
 The script reads from `.env` (but doesn't require it):
 ```bash
-CLAUDE_STATE_REPO=https://github.com/hsderek/claude-state
+CLAUDE_STATE_REPO=https://github.com/hsderek/claude-sync
 CLAUDE_STATE_SUBDIR=logreducer  # Auto-detected from directory name
 ```
 
@@ -711,3 +714,47 @@ If you're a new Claude session working on this project:
 - **NEVER** add it to pdev or other scripts
 - **ALWAYS** keep it as a standalone utility
 - The project itself should remain unaware of claude-sync's existence
+
+## End-of-Day Sequence for Claude Sessions
+
+### Standard End-of-Day Request (Copy & Paste)
+
+```
+Please perform the end-of-day sequence:
+
+1. Summarize today's work
+2. Update CLAUDE.md if needed
+3. Check git status  
+4. Run claude-sync to backup state
+5. Create handover notes for next session
+6. Verify CI/CD still works
+
+Project: logreducer
+Claude sync repo: https://github.com/hsderek/claude-sync
+```
+
+### What Claude Should Do
+
+1. **Summary**: List accomplishments and pending tasks
+2. **Git Check**: Show modified files and what shouldn't be committed
+3. **Sync State**: Run `/usr/bin/python3 scripts/claude-sync`
+4. **Handover**: Create notes for session continuity
+5. **Validation**: Ensure project still builds and tests pass
+
+### Quick Commands
+
+```bash
+# Check status
+git status --short
+
+# Sync Claude state
+/usr/bin/python3 scripts/claude-sync --message "eod: [summary]"
+
+# Verify tests
+scripts/pdev test-unit
+
+# Check versions
+scripts/pdev version-check
+```
+
+See `CLAUDE_END_OF_DAY.md` for the full template and customization options.
