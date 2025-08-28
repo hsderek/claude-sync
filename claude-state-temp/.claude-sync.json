@@ -1,0 +1,17 @@
+{
+  "last_sync": "2025-08-28T10:03:28.710678",
+  "project": "claude-state-temp",
+  "source_path": "/tmp/claude-state-temp",
+  "synced_files": [
+    "CLAUDE.md",
+    ".claude/",
+    "scripts/claude-sync",
+    "scripts/README.md",
+    ".vscode/settings.json",
+    "docs/DEVELOPER_ANTIPATTERNS.md",
+    "docs/DEVELOPER_CHANGES.md",
+    "docs/SCRIPT_ARCHITECTURE.md",
+    "docs/CLAUDE_SYNC_WORKFLOW.md"
+  ],
+  "sync_tool_version": "2.0.0"
+}
