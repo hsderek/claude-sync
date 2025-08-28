@@ -4,7 +4,7 @@
 
 LogReducer is a high-performance log processing system designed for reducing large log files while maintaining operational visibility. The system implements advanced pattern extraction, anomaly detection, and temporal analysis algorithms.
 
-## Current Project Status (August 26, 2025)
+## Current Project Status (August 28, 2025)
 
 ### Completed Implementation ✓
 - **Core LogReducer functionality**: Pattern extraction, anomaly detection, temporal analysis working
@@ -14,16 +14,17 @@ LogReducer is a high-performance log processing system designed for reducing lar
 - **Professional API Design**: Silent by default, proper logging, no print statements
 - **Memory Management**: Configurable limits with enforcement testing
 - **CPU Auto-detection**: Container-aware CPU core detection for threading
-- **Security Scanning**: Comprehensive vulnerability detection pipeline
-- **CI/CD Pipeline**: GitHub Actions with semantic-release automation
+- **Security Scanning**: Comprehensive vulnerability detection pipeline with configurable MIN_SECURITY_LEVEL
+- **CI/CD Pipeline**: GitHub Actions with fully functional semantic-release automation
 - **Documentation**: Sphinx docs, VS Code workspace, comprehensive README
 - **Directory Structure**: Moved to `/data/output` structure, samples organized
-- **Changelog**: Fixed dates working back from August 26, 2025 - LOCKED for semantic-release only
+- **Changelog**: Automated changelog generation via semantic-release
 - **Git Repository**: Initialized with semantic versioning and automated releases
 - **Dependencies**: Core deps updated (numpy, scikit-learn moved to core from optional)
-- **Production Ready**: Full API testing passed, ready for PyPI deployment
-- **Version 3.2.0**: Manually bumped version due to CI issues, semantic-release temporarily disabled
+- **Production Ready**: Full API testing passed, deployed to JFrog Artifactory
+- **Version 3.3.1**: Semantic-release automation fully working, automatic version bumps
 - **Generic Python Template**: Script structure designed for reuse as Python project template
+- **JFrog Deployment**: Successfully deploying packages to JFrog Artifactory PyPI repository
 
 ### Verified Working ✓  
 - **API Import**: `import logreducer` successful, LogReducer instances create without errors
@@ -268,12 +269,6 @@ When creating the generic template:
 ## Future Enhancements
 
 ### High Priority
-- **Fix Semantic-Release CI**: Troubleshoot and fix GitHub Actions semantic-release automation
-  - Currently disabled due to failing builds causing CI spam
-  - Workflow has permissions and environment loading issues
-  - Debug output added but automation still not triggering version bumps
-  - Need to investigate GitHub token permissions and semantic-release configuration
-  - Version manually updated to 3.2.0 until automation is fixed
 - **Metrics Integration**: Metrics functionality has been moved to a separate module for better separation of concerns
 
 ### Medium Priority
@@ -352,33 +347,6 @@ The development environment requires:
 
 Run `python scripts/check_dev_tools.py` to verify all tools are installed and properly configured.
 
-## Claude Code VS Code Integration Fixes (August 28, 2025)
-
-### Fixed Startup Issues
-1. **Path Error Resolution**: Removed incorrect `/projects/infra-jira-github` reference from `.claude/settings.local.json`
-   - The path didn't exist (actual path is `/projects/cicd-jira-github`)
-   - Cleaned up all absolute path permissions that were pointing to other projects
-   - Permissions should be relative to project root, not OS root
-
-2. **Double venv Activation Fix**: Disabled VS Code Python extension's auto-activation
-   - Set `"python.terminal.activateEnvironment": false` in `.vscode/settings.json`
-   - Claude Code handles venv activation automatically
-   - Prevents duplicate activation commands in terminal
-
-3. **Claude VS Code Settings Added**: Enhanced integration settings in `.vscode/settings.json`
-   ```json
-   "claude.alwaysAllowReadOnly": true,
-   "claude.alwaysAllowEdits": true,
-   "claude.confirmBeforeEdit": false,
-   "claude.confirmBeforeRead": false
-   ```
-
-### Current Configuration Status
-- `.claude/settings.local.json`: Contains clean project-specific permissions without cross-project references
-- `.vscode/settings.json`: Includes Claude integration settings and disabled Python auto-activation
-- Virtual environment: Located at `.venv/` and properly detected by Claude Code
-- No more startup errors about missing paths or duplicate venv activation
-
 ## Important Notes for Future Sessions
 
 ### Virtual Environment Management
@@ -392,6 +360,33 @@ Run `python scripts/check_dev_tools.py` to verify all tools are installed and pr
 - All commits should use conventional commit format for proper automation
 - Push changes to trigger CI/CD pipeline and version bumps
 
+#### Semantic Release Commit Types
+The project uses standard conventional commit types for automated version bumping:
+
+**Version Bumping:**
+- `feat:` - New features (triggers **minor** version bump)
+- `fix:` - Bug fixes (triggers **patch** version bump)
+- `perf:` - Performance improvements (triggers **patch** version bump)
+- `refactor:` - Code refactoring (triggers **patch** version bump)
+
+**Non-versioning (allowed but no version bump):**
+- `docs:` - Documentation changes
+- `style:` - Code style/formatting changes  
+- `test:` - Test additions/modifications
+- `chore:` - Maintenance tasks
+- `ci:` - CI/CD configuration changes
+- `build:` - Build system changes
+
+**Breaking Changes:**
+- Any commit with `BREAKING CHANGE:` in the footer triggers **major** version bump
+- Use `!` after type for breaking changes: `feat!:` or `fix!:`
+
+**Examples:**
+- `feat: add anomaly detection mode` → 3.2.0 → 3.3.0
+- `fix: resolve memory leak in pattern extractor` → 3.2.0 → 3.2.1  
+- `refactor: consolidate scripts architecture` → 3.2.0 → 3.2.1
+- `docs: update API documentation` → No version bump
+
 ### Key Configuration
 - Logging is OFF by default (`enable_logging: bool = False`)
 - Output directory is `/data/output` (moved from `/output`)
@@ -404,357 +399,4 @@ Run `python scripts/check_dev_tools.py` to verify all tools are installed and pr
 - Python floor version: 3.11 (this project uses 3.12 via .python-version)
 
 ### Known Issues
-- **Semantic-release CI**: GitHub Actions automation failing, currently disabled to prevent spam
-- Need to debug semantic-release configuration and GitHub token permissions
-- Manual version management in use until CI is fixed
-
-## Corporate Python Project Template Recommendations (August 28, 2025)
-
-### CI/CD Architecture Analysis
-
-Based on comprehensive analysis of the LogReducer CI/CD pipeline, here are the key recommendations for using this as a corporate-wide Python project template:
-
-#### ✅ Strengths (Keep As-Is)
-
-1. **Multi-Stage CI Pipeline**
-   - Clear separation: test → security → build → deploy
-   - Parallel job execution where possible
-   - Smart caching strategies for dependencies
-   - Comprehensive test coverage reporting
-
-2. **Semantic Release Integration**
-   - Automated versioning based on conventional commits
-   - Changelog generation from commit history
-   - Multiple version file synchronization (pyproject.toml, __init__.py, VERSION)
-   - GitHub release creation with artifacts
-
-3. **Security-First Approach**
-   - Security scanning integrated but non-blocking (allows deployment while alerting)
-   - Multiple security tools: pip-audit, bandit, optional semgrep
-   - Dedicated security workflow for scheduled scans
-   - Security reports stored in `.tmp/security-reports/`
-
-4. **Script Consolidation**
-   - Clean separation: `pdev` (dev), `ci-helper` (CI/CD), `setup` (bootstrap)
-   - Configuration-driven via YAML files
-   - Common utilities in `scripts/common.py`
-   - Professional logging with RFC 3339 timestamps
-
-5. **Environment Management**
-   - Python version detection from `.python-version-config.yaml`
-   - Virtual environment auto-detection and creation
-   - Container-aware CPU detection for proper threading
-   - Memory management with configurable limits
-
-#### ⚠️ Areas Needing Attention
-
-1. **Semantic Release Configuration**
-   - Currently requires manual `semantic-release` installation
-   - GitHub token permissions need proper setup
-   - Consider using `python-semantic-release` v8+ for better Python integration
-   - Add `.releaserc.json` for cleaner configuration
-
-2. **Local CI Testing**
-   - `act` requires GitHub authentication for action downloads
-   - Consider creating offline-capable CI tests
-   - Add Docker-based local CI option without GitHub dependencies
-
-3. **Documentation Generation**
-   - Sphinx configuration present but not integrated into CI
-   - Add automated documentation deployment to GitHub Pages
-   - Consider adding API documentation generation
-
-#### 🎯 Template Extraction Checklist
-
-When creating the corporate template from this project:
-
-1. **Replace Project-Specific References**
-   ```yaml
-   # In CI workflows, replace:
-   - "logreducer" → "{{ project_name }}"
-   - "hypersec.jfrog.io" → "{{ artifactory_url }}"
-   - HyperSec references → "{{ company_name }}"
-   ```
-
-2. **Create Template Structure**
-   ```
-   corporate-python-template/
-   ├── .github/
-   │   ├── workflows/
-   │   │   ├── ci.yml.template
-   │   │   ├── release-python.yml.template
-   │   │   └── security.yml.template
-   │   └── runner-env.sh
-   ├── scripts/
-   │   ├── setup           # Keep as-is
-   │   ├── pdev           # Keep as-is
-   │   ├── ci-helper     # Keep as-is
-   │   ├── common.py     # Keep as-is
-   │   ├── pdev.yaml.template
-   │   └── ci-helper.yaml.template
-   ├── src/
-   │   └── {{ project_name }}/
-   │       ├── __init__.py.template
-   │       └── py.typed
-   ├── tests/
-   │   ├── conftest.py
-   │   └── test_sample.py.template
-   ├── .python-version-config.yaml
-   ├── pyproject.toml.template
-   ├── Makefile
-   ├── README.md.template
-   └── cookiecutter.json   # For template variables
-   ```
-
-3. **Add Cookiecutter Configuration**
-   ```json
-   {
-     "project_name": "my_project",
-     "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
-     "company_name": "CompanyName",
-     "artifactory_url": "https://company.jfrog.io",
-     "python_version": "3.12",
-     "author_name": "Development Team",
-     "author_email": "dev@company.com",
-     "enable_semantic_release": true,
-     "enable_security_scanning": true,
-     "enable_docs": false
-   }
-   ```
-
-4. **CI/CD Configuration Variables**
-   - Store sensitive data in GitHub Secrets
-   - Use GitHub Variables for non-sensitive configuration
-   - Document required secrets in template README
-
-5. **Recommended GitHub Secrets Setup**
-   ```
-   Required Secrets:
-   - ARTIFACTORY_USERNAME     # For package deployment
-   - ARTIFACTORY_PASSWORD     # For package deployment
-   - PYPI_API_TOKEN          # Optional: For public PyPI
-   
-   Required Variables:
-   - ENABLE_ARTIFACTORY_DEPLOYMENT  # true/false
-   - ENABLE_PYPI_DEPLOYMENT         # true/false
-   - PYTHON_VERSION                 # Default Python version
-   ```
-
-#### 🚀 Deployment Strategy Recommendations
-
-1. **Branch Strategy**
-   - `main` → Production deployments
-   - `develop` → Staging deployments
-   - `feature/*` → Development builds only
-   - Use branch protection rules
-
-2. **Release Process**
-   - Enforce conventional commits via commitlint
-   - Use semantic-release for automated versioning
-   - Create GitHub releases with changelog
-   - Deploy to appropriate PyPI repository based on branch
-
-3. **Testing Strategy**
-   - Unit tests: Always run, fast feedback
-   - Integration tests: Run on PR and main
-   - Security scans: Non-blocking but visible
-   - Performance tests: Optional, scheduled
-
-#### 📋 Implementation Priority
-
-1. **Phase 1: Core Template** (Week 1)
-   - Extract scripts/ directory as-is
-   - Create cookiecutter template structure
-   - Document setup process
-
-2. **Phase 2: CI/CD Templates** (Week 2)
-   - Parameterize GitHub workflows
-   - Add local CI testing options
-   - Create deployment documentation
-
-3. **Phase 3: Security & Compliance** (Week 3)
-   - Integrate corporate security policies
-   - Add compliance checking workflows
-   - Create security documentation
-
-4. **Phase 4: Documentation & Training** (Week 4)
-   - Create template usage guide
-   - Add example projects
-   - Conduct team training sessions
-
-#### 🔧 Maintenance Considerations
-
-1. **Version Management**
-   - Use semantic-release for all projects
-   - Maintain VERSION file for non-Python consumers
-   - Synchronize all version references automatically
-
-2. **Dependency Updates**
-   - Use Dependabot for automated updates
-   - Pin major versions, allow minor/patch updates
-   - Regular security vulnerability scanning
-
-3. **Template Updates**
-   - Maintain template in separate repository
-   - Version the template itself
-   - Provide migration guides for template updates
-
-#### 💡 Best Practices for Template Users
-
-1. **Initial Setup**
-   ```bash
-   cookiecutter gh:company/python-template
-   cd my_project
-   scripts/setup
-   ```
-
-2. **Development Workflow**
-   ```bash
-   scripts/pdev test     # Run tests
-   scripts/pdev format   # Format code
-   scripts/pdev all      # Run all checks
-   ```
-
-3. **CI/CD Integration**
-   - Configure GitHub Secrets before first push
-   - Use conventional commits from the start
-   - Review security scan results regularly
-
-4. **Documentation**
-   - Keep README.md updated
-   - Document API changes
-   - Maintain CHANGELOG via semantic-release
-
-This template provides a production-ready foundation for Python projects with enterprise-grade CI/CD, security scanning, and automated release management
-
-## Claude State Sync Script (STANDALONE - DO NOT INTEGRATE)
-
-### Important: `scripts/claude-sync` is STANDALONE
-
-The `scripts/claude-sync` script is a **COMPLETELY STANDALONE UTILITY** that must remain independent of any project. 
-
-**CRITICAL RULES FOR CLAUDE SESSIONS:**
-1. **DO NOT integrate claude-sync into pdev** - It's standalone by design
-2. **DO NOT add claude-sync to any project scripts** - It operates independently  
-3. **DO NOT make the project aware of claude-sync** - The project should have zero knowledge of it
-4. **DO NOT commit claude-sync to the main repo** - It's in .gitignore for a reason
-5. **DO NOT create dependencies on claude-sync** - It must work across any project
-6. **DO NOT use project venv** - It uses system Python with no pip dependencies
-7. **DO NOT assume any project setup** - It works with zero configuration
-
-### How Claude Sync Works
-
-The script syncs Claude-specific files to a central repository (`https://github.com/hsderek/claude-sync`) with subdirectories for each project:
-
-```
-claude-sync/
-├── scripts/             # Standalone scripts
-│   ├── claude-sync      # The sync script
-│   └── README.md        # Script documentation
-├── logreducer/          # This project
-│   ├── CLAUDE.md
-│   ├── .claude/
-│   └── docs/
-├── another-project/     # Another project
-│   ├── CLAUDE.md
-│   └── .claude/
-└── yet-another/         # Yet another project
-    ├── CLAUDE.md
-    └── .claude/
-```
-
-### Usage (Standalone)
-
-```bash
-# Run with system Python (NOT project venv!)
-/usr/bin/python3 scripts/claude-sync
-
-# Or make it executable and run directly
-chmod +x scripts/claude-sync
-./scripts/claude-sync
-
-# With custom message
-./scripts/claude-sync --message "feat: Add new template recommendations"
-
-# Dry run to see what would be synced
-./scripts/claude-sync --dry-run
-```
-
-### Configuration
-
-The script reads from `.env` (but doesn't require it):
-```bash
-CLAUDE_STATE_REPO=https://github.com/hsderek/claude-sync
-CLAUDE_STATE_SUBDIR=logreducer  # Auto-detected from directory name
-```
-
-### Files Synced
-
-- `CLAUDE.md` - This file with all development context
-- `.claude/` - Claude Code settings
-- `scripts/claude-sync` - The sync script itself
-- `scripts/README.md` - Scripts documentation
-- `.vscode/settings.json` - VS Code Claude integration
-- Various `docs/*.md` files about development
-
-### Why Completely Standalone?
-
-1. **No Git Interference**: Uses temporary clones, never touches local git
-2. **No Python Dependencies**: Uses only Python stdlib, no pip packages
-3. **No Virtual Environment**: Uses system Python directly
-4. **Concurrent Safe**: Multiple projects can sync simultaneously  
-5. **No CI/CD Triggers**: Excluded from all automation
-6. **Cross-Project**: Works identically across any project
-7. **Zero Configuration**: Works even without .env file
-
-### For New Claude Sessions
-
-If you're a new Claude session working on this project:
-- **NEVER** integrate claude-sync into the project workflow
-- **NEVER** add it to pdev or other scripts
-- **ALWAYS** keep it as a standalone utility
-- The project itself should remain unaware of claude-sync's existence
-
-## End-of-Day Sequence for Claude Sessions
-
-### Standard End-of-Day Request (Copy & Paste)
-
-```
-Please perform the end-of-day sequence:
-
-1. Summarize today's work
-2. Update CLAUDE.md if needed
-3. Check git status  
-4. Run claude-sync to backup state
-5. Create handover notes for next session
-6. Verify CI/CD still works
-
-Project: logreducer
-Claude sync repo: https://github.com/hsderek/claude-sync
-```
-
-### What Claude Should Do
-
-1. **Summary**: List accomplishments and pending tasks
-2. **Git Check**: Show modified files and what shouldn't be committed
-3. **Sync State**: Run `/usr/bin/python3 scripts/claude-sync`
-4. **Handover**: Create notes for session continuity
-5. **Validation**: Ensure project still builds and tests pass
-
-### Quick Commands
-
-```bash
-# Check status
-git status --short
-
-# Sync Claude state
-/usr/bin/python3 scripts/claude-sync --message "eod: [summary]"
-
-# Verify tests
-scripts/pdev test-unit
-
-# Check versions
-scripts/pdev version-check
-```
-
-See `CLAUDE_END_OF_DAY.md` for the full template and customization options.
+- None currently - all core features are working properly
